@@ -25,7 +25,7 @@ public class UserListGeneralSpendingItemView extends ListItemView {
     @Override
     protected void updateMoneyRow(MoneyRow newMoneyRow) {
         walletManager.updateGeneralSpendingMoneyRow(
-                newMoneyRow.getId(), newMoneyRow.getValue(), newMoneyRow.getDescription());
+                newMoneyRow.getId(), newMoneyRow.getValue(), newMoneyRow.getDescription(), newMoneyRow.getDate());
     }
 
     @Override

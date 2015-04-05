@@ -21,7 +21,7 @@ public class UserListItemView extends ListItemView {
     @Override
     protected void updateMoneyRow(MoneyRow newMoneyRow) {
         walletManager.updateMoneyRow(
-                newMoneyRow.getId(), newMoneyRow.getValue(), newMoneyRow.getDescription());
+                newMoneyRow.getId(), newMoneyRow.getValue(), newMoneyRow.getDescription(), newMoneyRow.getDate());
     }
 
     @Override

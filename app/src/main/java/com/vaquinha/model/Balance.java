@@ -90,7 +90,7 @@ public class Balance {
         addToTotalMoney(moneyRow.getValue() * -1);
     }
 
-    public float updateMoneyRow(long moneyRowId, float value, String description) {
+    public float updateMoneyRow(long moneyRowId, float value, String description, String formattedDate) {
 
         MoneyRow moneyRow = findMoneyRow(moneyRowId);
 
@@ -98,6 +98,7 @@ public class Balance {
 
         moneyRow.setValue(value);
         moneyRow.setDescription(description);
+        moneyRow.setDate(formattedDate);
 
         addToTotalMoney(difference);
 

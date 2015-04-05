@@ -59,10 +59,11 @@ public class MoneyRowDAO {
         return dbInstance.insert(FeedEntry.TABLE_NAME, null, values);
     }
 
-    public void update(long moneyRowId, float value, String description) {
+    public void update(long moneyRowId, float value, String description, String formattedDate) {
         ContentValues values = new ContentValues();
         values.put(FeedEntry.COLUMN_NAME_VALUE, value);
         values.put(FeedEntry.COLUMN_NAME_DESCRIPTION, description);
+        values.put(FeedEntry.COLUMN_NAME_DATE, formattedDate);
 
         dbInstance.update(FeedEntry.TABLE_NAME, values, FeedEntry._ID + " = ? ", new String[]{String.valueOf(moneyRowId)});
     }

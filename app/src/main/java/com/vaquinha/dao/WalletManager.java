@@ -103,17 +103,17 @@ public class WalletManager {
         return moneyRowId;
     }
 
-    public void updateGeneralSpendingMoneyRow(long moneyRowId, float value, String description) {
-        moneyRowDAO.update(moneyRowId, value, description);
-        float difference = generalBalance.updateMoneyRow(moneyRowId, value, description);
+    public void updateGeneralSpendingMoneyRow(long moneyRowId, float value, String description, String formattedDate) {
+        moneyRowDAO.update(moneyRowId, value, description, formattedDate);
+        float difference = generalBalance.updateMoneyRow(moneyRowId, value, description, formattedDate);
 
         addGeneralValueToAllUsersTotalBalance(difference);
     }
 
-    public void updateMoneyRow(long moneyRowId, float value, String description) {
-        moneyRowDAO.update(moneyRowId, value, description);
+    public void updateMoneyRow(long moneyRowId, float value, String description, String formattedDate) {
+        moneyRowDAO.update(moneyRowId, value, description, formattedDate);
 
-        float difference = findBalance(moneyRowId).updateMoneyRow(moneyRowId, value, description);
+        float difference = findBalance(moneyRowId).updateMoneyRow(moneyRowId, value, description, formattedDate);
 
         generalBalance.addToTotalBalance(difference);
     }

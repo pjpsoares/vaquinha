@@ -31,6 +31,6 @@ public class MoneyDateHelper {
     }
 
     public static String format(Calendar calendar) {
-        return dateFormat.format(calendar);
+        return dateFormat.format(calendar.getTime());
     }
 }

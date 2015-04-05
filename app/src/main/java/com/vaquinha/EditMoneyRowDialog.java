@@ -3,16 +3,13 @@ package com.vaquinha;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.vaquinha.common.EditDateView;
-import com.vaquinha.dao.WalletManager;
 import com.vaquinha.model.MoneyRow;
 
 public class EditMoneyRowDialog extends DialogFragment {
@@ -68,7 +65,7 @@ public class EditMoneyRowDialog extends DialogFragment {
 
     private String getInputDate() {
         EditDateView inputValue = (EditDateView) moneyRowDialog.findViewById(R.id.money_date_input);
-        return inputValue.getText().toString();
+        return inputValue.getDate();
     }
 
     private void initializeConfirmButton() {

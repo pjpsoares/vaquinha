@@ -51,7 +51,7 @@ public class EditDateView extends LinearLayout {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
+                                setDate(year, monthOfYear, dayOfMonth);
                             }
                         },
                         calendar.get(Calendar.YEAR),
@@ -62,6 +62,17 @@ public class EditDateView extends LinearLayout {
                 datePickerDialog.show();
             }
         });
+    }
+
+    public void setDate(int year, int monthOfYear, int dayOfMonth) {
+        Calendar date = Calendar.getInstance();
+        date.set(year, monthOfYear, dayOfMonth);
+
+        this.setDate(date);
+    }
+
+    public void setDate(Calendar date) {
+        this.setDate(MoneyDateHelper.format(date));
     }
 
     public void setDate(String date) {
