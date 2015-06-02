@@ -1,23 +1,23 @@
 package com.vaquinha;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.vaquinha.common.MoneyRowView;
 import com.vaquinha.dao.WalletManager;
+import com.vaquinha.dialogs.EditMoneyRowDialog;
+import com.vaquinha.listeners.balance.NewMoneyRowListener;
+import com.vaquinha.listeners.balance.RemoveMoneyRowListener;
+import com.vaquinha.listeners.balance.UpdateMoneyRowListener;
 import com.vaquinha.model.Balance;
 import com.vaquinha.model.MoneyRow;
 import com.vaquinha.model.User;
-import com.vaquinha.utils.MoneyDateHelper;
-
-import java.util.List;
 
 public abstract class ListItemView extends LinearLayout {
 
@@ -39,7 +39,6 @@ public abstract class ListItemView extends LinearLayout {
 
         initBalanceListener();
         initUserNameButton();
-        initAddMoneyPanelInteractions();
         initMoneyList();
     }
 
@@ -52,9 +51,26 @@ public abstract class ListItemView extends LinearLayout {
     }
 
     private void initBalanceListener() {
-        balance.setOnTotalBalanceChangeListener(new BalanceChangeListener() {
+        balance.setNewMoneyRowListener(new NewMoneyRowListener() {
             @Override
-            public void onBalanceChange() {
+            public void onNewMoneyRow(MoneyRow moneyRow) {
+                addRowToMoneyList(moneyRow);
+                setTotalBalanceLabel();
+            }
+        });
+
+        balance.setRemoveMoneyRowListener(new RemoveMoneyRowListener() {
+            @Override
+            public void onRemoveMoneyRow(long moneyRowId) {
+                removeMoneyRow(moneyRowId);
+                setTotalBalanceLabel();
+            }
+        });
+
+        balance.setUpdateMoneyRowListener(new UpdateMoneyRowListener() {
+            @Override
+            public void onUpdateMoneyRow(MoneyRow moneyRow) {
+                updateMoneyRow(moneyRow);
                 setTotalBalanceLabel();
             }
         });
@@ -89,148 +105,41 @@ public abstract class ListItemView extends LinearLayout {
     }
 
     public void initMoneyList() {
-        List<MoneyRow> moneyRows = balance.getMoneyRows();
-
         LinearLayout moneyList = (LinearLayout) findViewById(R.id.userMoneyList);
-        for (MoneyRow moneyRow : moneyRows) {
+        for (MoneyRow moneyRow : balance.getMoneyRowsToNumberOfUsers().keySet()) {
             addRowToMoneyList(moneyList, moneyRow);
         }
     }
 
-    private void addRowToMoneyList(MoneyRow moneyRow) {
-        addRowToMoneyList((LinearLayout) findViewById(R.id.userMoneyList), moneyRow);
-    }
-
-    protected void editMoneyRow(LinearLayout moneyRowPanel, MoneyRow moneyRow) {
-
-        Activity mainActivity = (Activity) this.getRootView().getContext();
-
-        EditMoneyRowDialog dialog = new EditMoneyRowDialog()
-                .onDeleteRow(new OnDeleteRow(moneyRowPanel))
-                .onSaveRow(new OnSaveRow(moneyRowPanel));
-
-        dialog.setMoneyRow(moneyRow);
-
-        dialog.show(mainActivity.getFragmentManager(), "NoticeDialogFragment");
-    }
-
-    protected abstract void deleteMoneyRow(long rowId);
-
-    private class OnDeleteRow implements EditMoneyRowDialog.OnDeleteListener {
-
-        final LinearLayout moneyRowPanel;
-
-        protected OnDeleteRow(LinearLayout moneyRowPanel) {
-            this.moneyRowPanel = moneyRowPanel;
-        }
-
-        @Override
-        public void onClick(long moneyRowId) {
-            deleteMoneyRow(moneyRowId);
-
-            ((LinearLayout) moneyRowPanel.getParent()).removeView(moneyRowPanel);
-        }
-    }
-
-    private class OnSaveRow implements EditMoneyRowDialog.OnUpdateListener {
-
-        private final LinearLayout moneyRowPanel;
-
-        public OnSaveRow(LinearLayout moneyRowPanel) {
-            this.moneyRowPanel = moneyRowPanel;
-        }
-
-        @Override
-        public void onClick(MoneyRow newMoneyRow) {
-            updateMoneyRow(newMoneyRow);
-
-            ((TextView) moneyRowPanel.findViewById(R.id.money_value))
-                    .setText(String.valueOf(newMoneyRow.getValue()));
-            ((TextView) moneyRowPanel.findViewById(R.id.money_description))
-                    .setText(String.valueOf(newMoneyRow.getDescription()));
-        }
-    }
-
-    protected abstract void updateMoneyRow(MoneyRow newMoneyRow);
-
-    protected abstract long addMoneyRow(float value, String description, String dateFormatted);
-
-    private void addRowToMoneyList(LinearLayout moneyList, final MoneyRow moneyRow) {
-        final LinearLayout moneyRowPanel = (LinearLayout) layoutInflater.inflate(R.layout.money_row, null);
-
-        ((TextView) moneyRowPanel.findViewById(R.id.money_value))
-                .setText(String.valueOf(moneyRow.getValue()));
-        ((TextView) moneyRowPanel.findViewById(R.id.money_description))
-                .setText(String.valueOf(moneyRow.getDescription()));
-        ImageButton editMoneyRow = (ImageButton) moneyRowPanel.findViewById(R.id.edit_money_row);
-
-        editMoneyRow.setOnClickListener(new EditMoneyRowClickListener(moneyRowPanel, moneyRow));
-
-        moneyList.addView(moneyRowPanel, 0);
-    }
-
-    private class EditMoneyRowClickListener implements OnClickListener {
-
-        final LinearLayout moneyRowPanel;
-        final MoneyRow moneyRow;
-
-        private EditMoneyRowClickListener(LinearLayout moneyRowPanel, MoneyRow moneyRow) {
-            this.moneyRowPanel = moneyRowPanel;
-            this.moneyRow = moneyRow;
-        }
-
-        @Override
-        public void onClick(View v) {
-            editMoneyRow(moneyRowPanel, moneyRow);
-        }
-    }
-
-    private void initAddMoneyPanelInteractions() {
-
-        final ImageButton plusButton = (ImageButton) findViewById(R.id.confirm_money_plus);
-        final ImageButton minusButton = (ImageButton) findViewById(R.id.confirm_money_minus);
-        final EditText moneyInput = (EditText) findViewById(R.id.money_input);
-        final EditText moneyDescriptionInput = (EditText) findViewById(R.id.money_description_input);
-
-        plusButton.setOnClickListener(new AddValueClickListener(moneyInput, moneyDescriptionInput));
-        minusButton.setOnClickListener(new AddValueClickListener(moneyInput, moneyDescriptionInput, true));
-    }
-
-    private class AddValueClickListener implements OnClickListener {
-
-        private final EditText moneyInput;
-        private final EditText moneyDescriptionInput;
-        private final boolean negative;
-
-        private AddValueClickListener(EditText moneyInput, EditText moneyDescriptionInput) {
-            this(moneyInput, moneyDescriptionInput, false);
-        }
-
-        private AddValueClickListener(EditText moneyInput, EditText moneyDescriptionInput, boolean negative) {
-            this.moneyInput = moneyInput;
-            this.moneyDescriptionInput = moneyDescriptionInput;
-            this.negative = negative;
-        }
-
-        @Override
-        public void onClick(View v) {
-            String moneyDescription = moneyDescriptionInput.getText().toString();
-            String moneyInputString = moneyInput.getText().toString();
-            if (moneyInputString == null || "".equals(moneyInputString)) {
+    private void removeMoneyRow(final long moneyRowId) {
+        LinearLayout moneyList = (LinearLayout) findViewById(R.id.userMoneyList);
+        for (int i = 0; i < moneyList.getChildCount(); i++) {
+            MoneyRowView moneyRowView = (MoneyRowView) moneyList.getChildAt(i);
+            if (moneyRowView.isMoneyRow(moneyRowId)) {
+                moneyList.removeView(moneyRowView);
                 return;
             }
-
-            float value = Float.valueOf(moneyInputString);
-            if (negative) {
-                value = value * -1;
-            }
-            String dateFormatted = MoneyDateHelper.nowFormatted();
-            long rowId = addMoneyRow(value, moneyDescription, dateFormatted);
-
-            addRowToMoneyList(new MoneyRow(rowId, value, moneyDescription, dateFormatted));
-            moneyInput.setText("");
-            moneyDescriptionInput.setText("");
         }
+    }
+
+    private void updateMoneyRow(MoneyRow moneyRow) {
+        LinearLayout moneyList = (LinearLayout) findViewById(R.id.userMoneyList);
+        for (int i = 0; i < moneyList.getChildCount(); i++) {
+            MoneyRowView moneyRowView = (MoneyRowView) moneyList.getChildAt(i);
+            if (moneyRowView.isMoneyRow(moneyRow.getId())) {
+                moneyRowView.updateMoneyRow(moneyRow);
+                return;
+            }
+        }
+    }
+
+    private void addRowToMoneyList(final MoneyRow moneyRow) {
+        LinearLayout moneyList = (LinearLayout) findViewById(R.id.userMoneyList);
+        addRowToMoneyList(moneyList, moneyRow);
+    }
+
+    private void addRowToMoneyList(LinearLayout moneyList, final MoneyRow moneyRow) {
+        moneyList.addView(new MoneyRowView(getContext(), moneyRow), 0);
     }
 
 }

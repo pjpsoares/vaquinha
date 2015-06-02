@@ -12,6 +12,8 @@
     <string name="button_cancel">Cancel</string>
     <string name="title_activity_money_row">MoneyRowActivity</string>
 
+    <string name="add_money_row">Add Money Row</string>
+
     <string name="generalSpendings">Balance</string>
 
 </resources>

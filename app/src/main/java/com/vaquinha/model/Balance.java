@@ -1,74 +1,102 @@
 package com.vaquinha.model;
 
-import com.vaquinha.BalanceChangeListener;
+import com.vaquinha.listeners.balance.NewMoneyRowListener;
+import com.vaquinha.listeners.balance.RemoveMoneyRowListener;
+import com.vaquinha.listeners.balance.UpdateMoneyRowListener;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Balance {
 
-    private BigDecimal totalMoney = BigDecimal.ZERO;
     private BigDecimal totalBalance = BigDecimal.ZERO;
+    private int BALANCE_SCALE = 2;
 
-    private final List<MoneyRow> moneyRows = new ArrayList<>();
-    private BalanceChangeListener balanceChangeListener;
+    private final Map<MoneyRow, Integer> moneyRowsToNumberOfUsers = new HashMap<>();
+    private NewMoneyRowListener newMoneyRowListener;
+    private RemoveMoneyRowListener removeMoneyRowListener;
+    private UpdateMoneyRowListener updateMoneyRowListener;
 
-    public void addMoneyRows(List<MoneyRow> moneyRows) {
+    public void addMoneyRows(List<MoneyRow> moneyRows, Map<Long, Integer> moneyRowIdToNumberOfUsers) {
         for (MoneyRow moneyRow: moneyRows) {
-            addMoneyRow(moneyRow);
+            addMoneyRow(moneyRow, moneyRowIdToNumberOfUsers.get(moneyRow.getId()));
         }
     }
 
-    public void addMoneyRow(MoneyRow moneyRow) {
-        moneyRows.add(moneyRow);
-
-        addToTotalMoney(moneyRow.getValue());
+    public void addMoneyRow(MoneyRow moneyRow, Integer numberOfUsers) {
+        moneyRowsToNumberOfUsers.put(moneyRow, numberOfUsers);
+        addToTotalBalance(moneyRow, numberOfUsers);
+        notifyNewMoneyRow(moneyRow);
     }
 
-    public void addToTotalMoney(float value) {
-        addToTotalMoney(new BigDecimal(value));
+    public boolean removeMoneyRow(long moneyRowId) {
+        MoneyRow moneyRow = findMoneyRow(moneyRowId);
+        if (moneyRow == null) {
+            return false;
+        }
+
+        addToTotalBalance(moneyRow.getValue() * -1, moneyRowsToNumberOfUsers.get(moneyRow));
+        moneyRowsToNumberOfUsers.remove(moneyRow);
+        notifyRemoveMoneyRow(moneyRowId);
+
+        return true;
     }
 
-    public void addToTotalMoney(BigDecimal value) {
-        totalMoney = totalMoney.add(value).setScale(2, RoundingMode.HALF_UP);
-        addToTotalBalance(value);
+    private void addToTotalBalance(float value, Integer numberOfUsers) {
+        addToTotalBalance(calculatesValueForUser(new BigDecimal(value), numberOfUsers));
     }
 
-    public void addToTotalBalance(float value) {
-        addToTotalBalance(new BigDecimal(value));
+    public void addToTotalBalance(MoneyRow moneyRow, Integer numberOfUsers) {
+        addToTotalBalance(calculatesValueForUser(moneyRow, numberOfUsers));
     }
 
-    public void addToTotalBalance(BigDecimal value) {
-        totalBalance = totalBalance.add(value).setScale(2, RoundingMode.HALF_UP);
-        notifyTotalBalanceChangeListener();
+    private void addToTotalBalance(BigDecimal value) {
+        totalBalance = totalBalance.add(value).setScale(BALANCE_SCALE, RoundingMode.HALF_UP);
     }
 
-    public void setOnTotalBalanceChangeListener(BalanceChangeListener balanceChangeListener) {
-        this.balanceChangeListener = balanceChangeListener;
+    public void setNewMoneyRowListener(NewMoneyRowListener newMoneyRowListener) {
+        this.newMoneyRowListener = newMoneyRowListener;
     }
 
-    public void notifyTotalBalanceChangeListener() {
-        if (this.balanceChangeListener != null) {
-            this.balanceChangeListener.onBalanceChange();
+    public void setRemoveMoneyRowListener(RemoveMoneyRowListener removeMoneyRowListener) {
+        this.removeMoneyRowListener = removeMoneyRowListener;
+    }
+
+    public void setUpdateMoneyRowListener(UpdateMoneyRowListener updateMoneyRowListener) {
+        this.updateMoneyRowListener = updateMoneyRowListener;
+    }
+
+    private void notifyNewMoneyRow(MoneyRow moneyRow) {
+        if (this.newMoneyRowListener != null) {
+            this.newMoneyRowListener.onNewMoneyRow(moneyRow);
         }
     }
 
-    public BigDecimal getTotalMoney() {
-        return totalMoney;
+    private void notifyRemoveMoneyRow(long moneyRowId) {
+        if (this.removeMoneyRowListener != null) {
+            this.removeMoneyRowListener.onRemoveMoneyRow(moneyRowId);
+        }
+    }
+
+    private void notifyUpdateMoneyRow(MoneyRow moneyRow) {
+        if (this.updateMoneyRowListener != null) {
+            this.updateMoneyRowListener.onUpdateMoneyRow(moneyRow);
+        }
     }
 
     public BigDecimal getTotalBalance() {
         return totalBalance;
     }
 
-    public List<MoneyRow> getMoneyRows() {
-        return moneyRows;
+    public Map<MoneyRow, Integer> getMoneyRowsToNumberOfUsers() {
+        return moneyRowsToNumberOfUsers;
     }
 
     public MoneyRow findMoneyRow(long moneyRowId) {
-        for (MoneyRow moneyRow: moneyRows) {
+        for (MoneyRow moneyRow: moneyRowsToNumberOfUsers.keySet()) {
             if (moneyRow.getId() == moneyRowId) {
                 return moneyRow;
             }
@@ -83,24 +111,35 @@ public class Balance {
         return moneyRow != null ? moneyRow.getValue(): 0;
     }
 
-    public void removeMoneyRow(long moneyRowId) {
-        MoneyRow moneyRow = findMoneyRow(moneyRowId);
-        moneyRows.remove(moneyRow);
-
-        addToTotalMoney(moneyRow.getValue() * -1);
+    private BigDecimal calculatesValueForUser(MoneyRow moneyRow) {
+        return calculatesValueForUser(moneyRow, moneyRowsToNumberOfUsers.get(moneyRow));
     }
 
-    public float updateMoneyRow(long moneyRowId, float value, String description, String formattedDate) {
+    private BigDecimal calculatesValueForUser(MoneyRow moneyRow, Integer numberOfUsers) {
+        BigDecimal value = new BigDecimal(moneyRow.getValue());
+        return calculatesValueForUser(value, numberOfUsers);
+    }
+
+    private BigDecimal calculatesValueForUser(BigDecimal value, Integer numberOfUsers) {
+        return value.divide(new BigDecimal(numberOfUsers), BALANCE_SCALE, RoundingMode.HALF_UP);
+    }
+
+    public float updateMoneyRow(long moneyRowId, float value, String description, String formattedDate, Integer totalNumberOfUsers) {
 
         MoneyRow moneyRow = findMoneyRow(moneyRowId);
+        BigDecimal previousValue = calculatesValueForUser(moneyRow);
+        BigDecimal newValue = calculatesValueForUser(new BigDecimal(value), totalNumberOfUsers);
 
-        BigDecimal difference = new BigDecimal(value).subtract(new BigDecimal(moneyRow.getValue()));
+        BigDecimal difference = newValue.subtract(previousValue);
 
         moneyRow.setValue(value);
         moneyRow.setDescription(description);
         moneyRow.setDate(formattedDate);
+        moneyRowsToNumberOfUsers.put(moneyRow, totalNumberOfUsers);
 
-        addToTotalMoney(difference);
+        addToTotalBalance(difference);
+
+        notifyUpdateMoneyRow(moneyRow);
 
         return difference.floatValue();
     }

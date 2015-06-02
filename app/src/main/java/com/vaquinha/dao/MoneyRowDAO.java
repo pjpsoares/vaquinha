@@ -19,7 +19,6 @@ public class MoneyRowDAO {
     public static final String CREATE_TABLE =
             "CREATE TABLE " + FeedEntry.TABLE_NAME + " (" +
                     FeedEntry._ID + " INTEGER PRIMARY KEY," +
-                    FeedEntry.COLUMN_NAME_USER_ID + " INTEGER," +
                     FeedEntry.COLUMN_NAME_VALUE + " REAL," +
                     FeedEntry.COLUMN_NAME_DESCRIPTION + " TEXT," +
                     FeedEntry.COLUMN_NAME_DATE + " DATE ); ";
@@ -34,20 +33,9 @@ public class MoneyRowDAO {
 
     public static class FeedEntry implements BaseColumns {
         public static final String TABLE_NAME = "moneyRow";
-        public static final String COLUMN_NAME_USER_ID = "userId";
         public static final String COLUMN_NAME_VALUE = "value";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_DATE = "date";
-    }
-
-    public long insert(long userId, float value, String description, String formattedDate) {
-        ContentValues values = new ContentValues();
-        values.put(FeedEntry.COLUMN_NAME_USER_ID, userId);
-        values.put(FeedEntry.COLUMN_NAME_VALUE, value);
-        values.put(FeedEntry.COLUMN_NAME_DESCRIPTION, description);
-        values.put(FeedEntry.COLUMN_NAME_DATE, formattedDate);
-
-        return dbInstance.insert(FeedEntry.TABLE_NAME, null, values);
     }
 
     public long insert(float value, String description, String formattedDate) {
@@ -113,22 +101,10 @@ public class MoneyRowDAO {
         };
     }
 
-    public List<MoneyRow> getAllForUser() {
+    public List<MoneyRow> getAll() {
         Cursor cursor = dbInstance.query(
                 FeedEntry.TABLE_NAME, getColumnsForMoneyRow(),
-                FeedEntry.COLUMN_NAME_USER_ID + " IS NULL",
-                null, null, null, null);
-
-
-        return buildListFromCursor(cursor);
-    }
-
-    public List<MoneyRow> getAllForUser(long userId) {
-        Cursor cursor = dbInstance.query(
-                FeedEntry.TABLE_NAME, getColumnsForMoneyRow(),
-                FeedEntry.COLUMN_NAME_USER_ID + " = ?",
-                new String[]{String.valueOf(userId)},
-                null, null, null);
+                null, null, null, null, null);
 
         return buildListFromCursor(cursor);
     }

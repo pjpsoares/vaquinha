@@ -8,7 +8,7 @@ import com.vaquinha.model.MoneyRow;
 
 public class VaquinhaDbHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 10;
     public static final String DATABASE_NAME = "Vaquinha.db";
 
     public VaquinhaDbHelper(Context context) {
@@ -19,12 +19,14 @@ public class VaquinhaDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(UserDAO.CREATE_TABLE);
         db.execSQL(MoneyRowDAO.CREATE_TABLE);
+        db.execSQL(MoneyRowToUserDAO.CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(UserDAO.DELETE_TABLE);
         db.execSQL(MoneyRowDAO.DELETE_TABLE);
+        db.execSQL(MoneyRowToUserDAO.DELETE_TABLE);
 
         onCreate(db);
     }

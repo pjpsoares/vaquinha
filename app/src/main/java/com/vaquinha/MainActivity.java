@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.vaquinha.controller.AddUserActivity;
+import com.vaquinha.dialogs.AddMoneyRowDialog;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -25,15 +26,20 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_add_user) {
-            Intent intent = new Intent(this, AddUserActivity.class);
-            startActivity(intent);
+        switch (id) {
+            case R.id.action_add_user:
+                Intent intent = new Intent(this, AddUserActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_add_money_row:
+                AddMoneyRowDialog addMoneyRowDialog = new AddMoneyRowDialog();
+
+                addMoneyRowDialog.show(getFragmentManager(), "AddMoneyRowDialog");
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
 
         return super.onOptionsItemSelected(item);

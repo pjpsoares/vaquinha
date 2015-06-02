@@ -32,8 +32,8 @@
             android:layout_margin="5dp"
             android:singleLine="false"
             android:layout_height="wrap_content"/>
-    </LinearLayout>
 
+    </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/user_list_container"
@@ -63,14 +63,8 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/button_cancel"/>
-
-            <ImageButton android:id="@+id/button_delete"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/button_remove"/>
+                android:background="@drawable/button_cancel"/>
 
         </LinearLayout>
 

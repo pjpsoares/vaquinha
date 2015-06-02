@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="nameColor">#FF000000</color>
+
     <color name="positiveValue">#FF000000</color>
     <color name="negativeValue">#FF000000</color>
 

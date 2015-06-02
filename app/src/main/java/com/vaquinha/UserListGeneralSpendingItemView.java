@@ -18,23 +18,6 @@ public class UserListGeneralSpendingItemView extends ListItemView {
     }
 
     @Override
-    protected void deleteMoneyRow(long rowId) {
-        walletManager.deleteMoneyRowFromGeneralSpending(rowId);
-    }
-
-    @Override
-    protected void updateMoneyRow(MoneyRow newMoneyRow) {
-        walletManager.updateGeneralSpendingMoneyRow(
-                newMoneyRow.getId(), newMoneyRow.getValue(), newMoneyRow.getDescription(), newMoneyRow.getDate());
-    }
-
-    @Override
-    protected long addMoneyRow(float value, String description, String dateFormatted) {
-        return walletManager.addMoneyRowToGeneralSpending(
-                value, description, dateFormatted);
-    }
-
-    @Override
     protected String getUserName() {
         return getContext().getResources().getText(R.string.generalSpendings).toString();
     }

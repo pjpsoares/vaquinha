@@ -31,43 +31,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout android:id="@+id/money_input_panel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText android:id="@+id/money_input"
-                android:layout_width="60dp"
-                android:textSize="14dp"
-                android:inputType="numberDecimal"
-                android:layout_height="wrap_content"/>
-
-            <EditText android:id="@+id/money_description_input"
-                android:textSize="14dp"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:inputType="text"
-                android:layout_height="wrap_content"/>
-
-            <ImageButton android:id="@+id/confirm_money_minus"
-                android:layout_width="@dimen/icon_size"
-                android:layout_height="@dimen/icon_size"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="2dp"
-                android:background="@drawable/button_minus"/>
-
-            <ImageButton android:id="@+id/confirm_money_plus"
-                android:layout_width="@dimen/icon_size"
-                android:layout_height="@dimen/icon_size"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/button_plus"/>
-
-        </LinearLayout>
-
         <LinearLayout android:id="@+id/userMoneyList"
             android:orientation="vertical" android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
