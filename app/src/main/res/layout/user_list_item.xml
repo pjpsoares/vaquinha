@@ -14,6 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textSize="@dimen/font_size_title"
             android:layout_alignParentLeft="true"/>
 
         <TextView android:id="@+id/user_total_money_label"
@@ -21,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:textStyle="bold"
+            android:textSize="@dimen/font_size_title"
             android:textColor="@color/positiveValue"/>
 
     </RelativeLayout>

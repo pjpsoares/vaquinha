@@ -9,6 +9,7 @@
         android:layout_width="60dp"
         android:layout_margin="5dp"
         android:layout_height="match_parent"
+        android:textSize="@dimen/font_size"
         android:textStyle="bold"/>
 
     <TextView android:id="@+id/money_description"
@@ -17,6 +18,7 @@
         android:layout_margin="5dp"
         android:ellipsize="end"
         android:singleLine="true"
+        android:textSize="@dimen/font_size"
         android:layout_height="match_parent"/>
 
     <ImageButton android:id="@+id/edit_money_row"

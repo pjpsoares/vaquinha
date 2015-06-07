@@ -11,6 +11,7 @@
         android:layout_weight="1"
         android:id="@+id/user_name"
         android:textStyle="bold"
+        android:textSize="@dimen/font_size"
         android:textColor="@color/nameColor"/>
     <CheckBox
         android:paddingRight="10dp"

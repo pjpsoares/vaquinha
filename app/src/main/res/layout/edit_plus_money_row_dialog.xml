@@ -24,12 +24,14 @@
             android:layout_width="60dp"
             android:layout_margin="5dp"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size"
             android:inputType="numberDecimal"
             android:textStyle="bold"/>
 
         <EditText android:id="@+id/money_description_input"
             android:layout_width="match_parent"
             android:layout_margin="5dp"
+            android:textSize="@dimen/font_size"
             android:singleLine="false"
             android:layout_height="wrap_content"/>
     </LinearLayout>

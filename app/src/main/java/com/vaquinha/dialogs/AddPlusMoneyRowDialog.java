@@ -57,7 +57,7 @@ public class AddPlusMoneyRowDialog extends MoneyRowDialog {
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                getActivity().getApplicationContext(), android.R.layout.simple_spinner_item, items);
+                getActivity().getApplicationContext(), R.layout.user_spinner_item, items);
 
         Spinner dropdown = (Spinner) moneyRowDialog.findViewById(R.id.user_list_container);
         dropdown.setAdapter(adapter);

@@ -25,12 +25,14 @@
             android:layout_margin="5dp"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
+            android:textSize="@dimen/font_size"
             android:textStyle="bold"/>
 
         <EditText android:id="@+id/money_description_input"
             android:layout_width="match_parent"
             android:layout_margin="5dp"
             android:singleLine="false"
+            android:textSize="@dimen/font_size"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
