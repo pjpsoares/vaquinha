@@ -1,30 +1,32 @@
 package com.vaquinha.common;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vaquinha.R;
+import com.vaquinha.dialogs.EditMinusMoneyRowDialog;
 import com.vaquinha.dialogs.EditMoneyRowDialog;
+import com.vaquinha.dialogs.EditPlusMoneyRowDialog;
+import com.vaquinha.model.Balance;
 import com.vaquinha.model.MoneyRow;
-import com.vaquinha.utils.MoneyDateHelper;
 
-import java.util.Calendar;
+import java.math.BigDecimal;
 
 public class MoneyRowView extends LinearLayout {
 
     private MoneyRow moneyRow;
+    private int numberOfUsers;
     private LayoutInflater layoutInflater;
 
-    public MoneyRowView(Context context, MoneyRow moneyRow) {
+    public MoneyRowView(Context context, MoneyRow moneyRow, int numberOfUsers) {
         super(context);
         this.moneyRow = moneyRow;
+        this.numberOfUsers = numberOfUsers;
 
         initialize();
     }
@@ -39,36 +41,46 @@ public class MoneyRowView extends LinearLayout {
 
     private void initButtons() {
         ImageButton editMoneyRow = (ImageButton) this.findViewById(R.id.edit_money_row);
-        editMoneyRow.setOnClickListener(new EditMoneyRowClickListener(moneyRow));
+        editMoneyRow.setOnClickListener(new EditMoneyRowClickListener());
+    }
+
+    private float getValueForUser() {
+        return new BigDecimal(moneyRow.getValue())
+                .divide(new BigDecimal(numberOfUsers), Balance.BALANCE_SCALE, BigDecimal.ROUND_HALF_UP)
+                .floatValue();
     }
 
     private void initLabels() {
         ((TextView) this.findViewById(R.id.money_value))
-                .setText(String.valueOf(moneyRow.getValue()));
+                .setText(String.valueOf(getValueForUser()));
         ((TextView) this.findViewById(R.id.money_description))
                 .setText(String.valueOf(moneyRow.getDescription()));
     }
 
     protected void editMoneyRow(MoneyRow moneyRow) {
         Activity mainActivity = (Activity) this.getRootView().getContext();
+        EditMoneyRowDialog dialog;
 
-        EditMoneyRowDialog dialog = new EditMoneyRowDialog();
+        if (moneyRow.getValue() < 0) {
+            dialog = new EditMinusMoneyRowDialog();
+        } else {
+            dialog = new EditPlusMoneyRowDialog();
+        }
+
         dialog.setMoneyRow(moneyRow);
 
         dialog.show(mainActivity.getFragmentManager(), "EditMoneyRowDialog");
     }
 
-    public void updateMoneyRow(MoneyRow moneyRow) {
+    public void updateMoneyRow(MoneyRow moneyRow, int numberOfUsers) {
         this.moneyRow = moneyRow;
+        this.numberOfUsers = numberOfUsers;
         initLabels();
     }
 
     private class EditMoneyRowClickListener implements OnClickListener {
 
-        final MoneyRow moneyRow;
-
-        private EditMoneyRowClickListener(MoneyRow moneyRow) {
-            this.moneyRow = moneyRow;
+        private EditMoneyRowClickListener() {
         }
 
         @Override

@@ -1,23 +1,22 @@
 package com.vaquinha;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.vaquinha.common.MoneyRowView;
 import com.vaquinha.dao.WalletManager;
-import com.vaquinha.dialogs.EditMoneyRowDialog;
 import com.vaquinha.listeners.balance.NewMoneyRowListener;
 import com.vaquinha.listeners.balance.RemoveMoneyRowListener;
 import com.vaquinha.listeners.balance.UpdateMoneyRowListener;
 import com.vaquinha.model.Balance;
 import com.vaquinha.model.MoneyRow;
 import com.vaquinha.model.User;
+
+import java.util.Map;
 
 public abstract class ListItemView extends LinearLayout {
 
@@ -53,8 +52,8 @@ public abstract class ListItemView extends LinearLayout {
     private void initBalanceListener() {
         balance.setNewMoneyRowListener(new NewMoneyRowListener() {
             @Override
-            public void onNewMoneyRow(MoneyRow moneyRow) {
-                addRowToMoneyList(moneyRow);
+            public void onNewMoneyRow(MoneyRow moneyRow, int numberOfUsers) {
+                addRowToMoneyList(moneyRow, numberOfUsers);
                 setTotalBalanceLabel();
             }
         });
@@ -69,8 +68,8 @@ public abstract class ListItemView extends LinearLayout {
 
         balance.setUpdateMoneyRowListener(new UpdateMoneyRowListener() {
             @Override
-            public void onUpdateMoneyRow(MoneyRow moneyRow) {
-                updateMoneyRow(moneyRow);
+            public void onUpdateMoneyRow(MoneyRow moneyRow, int numberOfUsers) {
+                updateMoneyRow(moneyRow, numberOfUsers);
                 setTotalBalanceLabel();
             }
         });
@@ -106,8 +105,8 @@ public abstract class ListItemView extends LinearLayout {
 
     public void initMoneyList() {
         LinearLayout moneyList = (LinearLayout) findViewById(R.id.userMoneyList);
-        for (MoneyRow moneyRow : balance.getMoneyRowsToNumberOfUsers().keySet()) {
-            addRowToMoneyList(moneyList, moneyRow);
+        for (Map.Entry<MoneyRow, Integer> moneyRowEntry : balance.getMoneyRowsToNumberOfUsers().entrySet()) {
+            addRowToMoneyList(moneyList, moneyRowEntry.getKey(), moneyRowEntry.getValue());
         }
     }
 
@@ -122,24 +121,24 @@ public abstract class ListItemView extends LinearLayout {
         }
     }
 
-    private void updateMoneyRow(MoneyRow moneyRow) {
+    private void updateMoneyRow(MoneyRow moneyRow, int numberOfUsers) {
         LinearLayout moneyList = (LinearLayout) findViewById(R.id.userMoneyList);
         for (int i = 0; i < moneyList.getChildCount(); i++) {
             MoneyRowView moneyRowView = (MoneyRowView) moneyList.getChildAt(i);
             if (moneyRowView.isMoneyRow(moneyRow.getId())) {
-                moneyRowView.updateMoneyRow(moneyRow);
+                moneyRowView.updateMoneyRow(moneyRow, numberOfUsers);
                 return;
             }
         }
     }
 
-    private void addRowToMoneyList(final MoneyRow moneyRow) {
+    private void addRowToMoneyList(final MoneyRow moneyRow, int numberOfUsers) {
         LinearLayout moneyList = (LinearLayout) findViewById(R.id.userMoneyList);
-        addRowToMoneyList(moneyList, moneyRow);
+        addRowToMoneyList(moneyList, moneyRow, numberOfUsers);
     }
 
-    private void addRowToMoneyList(LinearLayout moneyList, final MoneyRow moneyRow) {
-        moneyList.addView(new MoneyRowView(getContext(), moneyRow), 0);
+    private void addRowToMoneyList(LinearLayout moneyList, final MoneyRow moneyRow, int numberOfUsers) {
+        moneyList.addView(new MoneyRowView(getContext(), moneyRow, numberOfUsers), 0);
     }
 
 }

@@ -13,7 +13,7 @@ import java.util.Map;
 public class Balance {
 
     private BigDecimal totalBalance = BigDecimal.ZERO;
-    private int BALANCE_SCALE = 2;
+    public static final int BALANCE_SCALE = 2;
 
     private final Map<MoneyRow, Integer> moneyRowsToNumberOfUsers = new HashMap<>();
     private NewMoneyRowListener newMoneyRowListener;
@@ -27,9 +27,9 @@ public class Balance {
     }
 
     public void addMoneyRow(MoneyRow moneyRow, Integer numberOfUsers) {
-        moneyRowsToNumberOfUsers.put(moneyRow, numberOfUsers);
+        moneyRowsToNumberOfUsers.put(moneyRow.clone(), numberOfUsers);
         addToTotalBalance(moneyRow, numberOfUsers);
-        notifyNewMoneyRow(moneyRow);
+        notifyNewMoneyRow(moneyRow, numberOfUsers);
     }
 
     public boolean removeMoneyRow(long moneyRowId) {
@@ -69,9 +69,9 @@ public class Balance {
         this.updateMoneyRowListener = updateMoneyRowListener;
     }
 
-    private void notifyNewMoneyRow(MoneyRow moneyRow) {
+    private void notifyNewMoneyRow(MoneyRow moneyRow, Integer numberOfUsers) {
         if (this.newMoneyRowListener != null) {
-            this.newMoneyRowListener.onNewMoneyRow(moneyRow);
+            this.newMoneyRowListener.onNewMoneyRow(moneyRow, numberOfUsers);
         }
     }
 
@@ -81,9 +81,9 @@ public class Balance {
         }
     }
 
-    private void notifyUpdateMoneyRow(MoneyRow moneyRow) {
+    private void notifyUpdateMoneyRow(MoneyRow moneyRow, Integer numberOfUsers) {
         if (this.updateMoneyRowListener != null) {
-            this.updateMoneyRowListener.onUpdateMoneyRow(moneyRow);
+            this.updateMoneyRowListener.onUpdateMoneyRow(moneyRow, numberOfUsers);
         }
     }
 
@@ -103,12 +103,6 @@ public class Balance {
         }
 
         return null;
-    }
-
-    public float findValue(long moneyRowId) {
-        MoneyRow moneyRow = findMoneyRow(moneyRowId);
-
-        return moneyRow != null ? moneyRow.getValue(): 0;
     }
 
     private BigDecimal calculatesValueForUser(MoneyRow moneyRow) {
@@ -132,14 +126,13 @@ public class Balance {
 
         BigDecimal difference = newValue.subtract(previousValue);
 
-        moneyRow.setValue(value);
-        moneyRow.setDescription(description);
-        moneyRow.setDate(formattedDate);
-        moneyRowsToNumberOfUsers.put(moneyRow, totalNumberOfUsers);
+        MoneyRow newMoneyRow = new MoneyRow(moneyRowId, value, description, formattedDate);
+        moneyRowsToNumberOfUsers.remove(moneyRow);
+        moneyRowsToNumberOfUsers.put(newMoneyRow, totalNumberOfUsers);
 
         addToTotalBalance(difference);
 
-        notifyUpdateMoneyRow(moneyRow);
+        notifyUpdateMoneyRow(newMoneyRow, totalNumberOfUsers);
 
         return difference.floatValue();
     }

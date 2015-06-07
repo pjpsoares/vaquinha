@@ -46,7 +46,7 @@ public abstract class MoneyRowDialog extends DialogFragment {
 
     protected abstract int getLayout();
 
-    private void closeDialog() {
+    protected void closeDialog() {
         getDialog().dismiss();
     }
 
@@ -55,7 +55,7 @@ public abstract class MoneyRowDialog extends DialogFragment {
         initializeConfirmButton();
     }
 
-    private float getInputValue() {
+    protected float getInputValue() {
         EditText inputValue = (EditText) moneyRowDialog.findViewById(R.id.money_value_input);
         return Float.valueOf(inputValue.getText().toString());
     }
@@ -105,7 +105,7 @@ public abstract class MoneyRowDialog extends DialogFragment {
 
     protected abstract void initializeValues();
 
-    private void buildUsersList() {
+    protected void buildUsersList() {
         List<User> allUsers = walletManager.getAllUsers();
         LinearLayout userListView = (LinearLayout) this.moneyRowDialog.findViewById(R.id.user_list_container);
 
@@ -116,7 +116,7 @@ public abstract class MoneyRowDialog extends DialogFragment {
 
     protected abstract boolean isUserSelected(long userId);
 
-    private List<Long> getSelectedUsersIds() {
+    protected List<Long> getSelectedUsersIds() {
         LinearLayout userListView = (LinearLayout) this.moneyRowDialog.findViewById(R.id.user_list_container);
         List<Long> selectedUsers = new ArrayList<>();
 

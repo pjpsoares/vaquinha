@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.vaquinha.controller.AddUserActivity;
-import com.vaquinha.dialogs.AddMoneyRowDialog;
+import com.vaquinha.dialogs.AddMinusMoneyRowDialog;
+import com.vaquinha.dialogs.AddPlusMoneyRowDialog;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -33,15 +35,21 @@ public class MainActivity extends ActionBarActivity {
                 Intent intent = new Intent(this, AddUserActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.action_add_money_row:
-                AddMoneyRowDialog addMoneyRowDialog = new AddMoneyRowDialog();
-
-                addMoneyRowDialog.show(getFragmentManager(), "AddMoneyRowDialog");
-                break;
             default:
                 throw new UnsupportedOperationException();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void actionPlusMoneyRow(View view) {
+        AddPlusMoneyRowDialog addMoneyRowDialog = new AddPlusMoneyRowDialog();
+        addMoneyRowDialog.show(getFragmentManager(), "PlusMoneyRowDialog");
+    }
+
+    public void actionMinusMoneyRow(View view) {
+        AddMinusMoneyRowDialog addMoneyRowDialog = new AddMinusMoneyRowDialog();
+        addMoneyRowDialog.show(getFragmentManager(), "MinusMoneyRowDialog");
+    }
+
 }

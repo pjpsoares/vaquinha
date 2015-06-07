@@ -30,18 +30,6 @@ public class MoneyRow {
         return date;
     }
 
-    public void setValue(float value) {
-        this.value = value;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -57,5 +45,10 @@ public class MoneyRow {
     @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
+    }
+
+    @Override
+    protected MoneyRow clone() {
+        return new MoneyRow(this.id, this.value, this.description, this.date);
     }
 }

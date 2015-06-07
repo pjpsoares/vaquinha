@@ -6,11 +6,11 @@ import com.vaquinha.utils.MoneyDateHelper;
 
 import java.util.List;
 
-public class AddMoneyRowDialog extends MoneyRowDialog {
+public class AddMinusMoneyRowDialog extends MoneyRowDialog {
 
     @Override
     protected int getLayout() {
-        return R.layout.add_money_row_dialog;
+        return R.layout.add_minus_money_row_dialog;
     }
 
     @Override
@@ -21,6 +21,11 @@ public class AddMoneyRowDialog extends MoneyRowDialog {
                 description,
                 formattedDate
         );
+    }
+
+    @Override
+    protected float getInputValue() {
+        return -1 * super.getInputValue();
     }
 
     @Override

@@ -4,6 +4,6 @@ import com.vaquinha.model.MoneyRow;
 
 public interface UpdateMoneyRowListener {
 
-    public void onUpdateMoneyRow(MoneyRow moneyRow);
+    public void onUpdateMoneyRow(MoneyRow moneyRow, int numberOfUsers);
 
 }

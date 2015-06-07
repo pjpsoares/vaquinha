@@ -5,10 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
-import com.vaquinha.model.MoneyRow;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +64,7 @@ public class MoneyRowToUserDAO {
 
     private Map<Long, List<Long>> buildMapFromUserToMoneyRow(Cursor cursor) {
         if (!cursor.moveToFirst()) {
-            return Collections.EMPTY_MAP;
+            return new HashMap<>(0);
         };
 
         Map<Long, List<Long>> userToMoneyRow = new HashMap<>();
