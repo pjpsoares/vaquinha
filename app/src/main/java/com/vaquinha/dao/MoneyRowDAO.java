@@ -104,7 +104,8 @@ public class MoneyRowDAO {
     public List<MoneyRow> getAll() {
         Cursor cursor = dbInstance.query(
                 FeedEntry.TABLE_NAME, getColumnsForMoneyRow(),
-                null, null, null, null, null);
+                null, null, null, null,
+                FeedEntry.COLUMN_NAME_DATE + ", " + FeedEntry._ID);
 
         return buildListFromCursor(cursor);
     }

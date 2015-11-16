@@ -6,10 +6,10 @@
     <color name="positiveValue">#FF000000</color>
     <color name="negativeValue">#FF000000</color>
 
-    <color name="generalSpendingTitle">#EE0070C0</color>
-    <color name="generalSpendingPanel">#AA0070C0</color>
+    <color name="generalSpendingTitle">#FC0070C0</color>
+    <color name="generalSpendingPanel">#DD0070C0</color>
 
-    <color name="userTitle">#EEE3940B</color>
-    <color name="userPanel">#AAE3940B</color>
+    <color name="userTitle">#FCE3940B</color>
+    <color name="userPanel">#DDE3940B</color>
 
 </resources>
